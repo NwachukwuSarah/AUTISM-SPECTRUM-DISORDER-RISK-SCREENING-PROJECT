@@ -27,7 +27,7 @@ def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Fami
   predictdata["Jaundice"] = predictdata["Jaundice"].str.lower()
   predictdata["Family_ASD"] = predictdata["Family_ASD"].str.lower()
 
-  with open("ASDmodel.pkl(2)", "rb") as f:
+  with open("ASDmodel (2).pkl", "rb") as f:
         bundle = pickle.load(f)
 
   preprocesseddata = bundle["preprocess"](predictdata)
@@ -97,3 +97,4 @@ if st.button('SCREEN AUTISM RISK'):
     else:
 
         st.error("Please answer all questions before screening")
+
