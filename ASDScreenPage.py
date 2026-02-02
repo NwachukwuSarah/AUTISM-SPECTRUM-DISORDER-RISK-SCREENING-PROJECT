@@ -2,6 +2,23 @@ import streamlit as st
 import pickle
 import pandas as pd
 
+def load_model():
+    with open("ASDmodel (2).pkl", "rb") as f:
+        bundle = pickle.load(f)
+    
+    # Extract functions to global scope
+    globals()['ChildPreprocessing15710'] = bundle["ChildPreprocessing15710"]
+    globals()['ChildPreprocessing234689'] = bundle["ChildPreprocessing234689"]
+    globals()['AdolesentPreprocessing15810'] = bundle["AdolesentPreprocessing15810"]
+    globals()['AdolesentPreprocessing234679'] = bundle["AdolesentPreprocessing234679"]
+    globals()['AdultPreprocessing17810'] = bundle["AdultPreprocessing17810"]
+    globals()['AdultPreprocessing234569'] = bundle["AdultPreprocessing234569"]
+    globals()['apply_question_preprocessing'] = bundle["apply_question_preprocessing"]
+    
+    return bundle
+
+# Load once
+bundle = load_model()
 
 def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Family_ASD):
   data = {
@@ -26,9 +43,6 @@ def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Fami
   predictdata["Sex"] = predictdata["Sex"].apply(lambda x: 'm' if x == "Male" else 'f')
   predictdata["Jaundice"] = predictdata["Jaundice"].str.lower()
   predictdata["Family_ASD"] = predictdata["Family_ASD"].str.lower()
-
-  with open("ASDmodel (2).pkl", "rb") as f:
-        bundle = pickle.load(f)
 
   preprocesseddata = bundle["preprocess"](predictdata)
   y_prob = bundle["ASDmodel"].predict(preprocesseddata)
@@ -97,4 +111,5 @@ if st.button('SCREEN AUTISM RISK'):
     else:
 
         st.error("Please answer all questions before screening")
+
 
