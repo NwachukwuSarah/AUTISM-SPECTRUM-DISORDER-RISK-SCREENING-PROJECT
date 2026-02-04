@@ -1,9 +1,68 @@
 import streamlit as st
-import dill
+import pickle
 import pandas as pd
 
+def ChildPreprocessing15710(val):
+  match val:
+    case "Definitely Agree":
+      return 1
+    case "Slightly Agree":
+      return 1
+    case _:
+      return 0
 
-def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Family_ASD, bundle):
+
+def ChildPreprocessing234689(val):
+  match val:
+    case "Definitely Disagree":
+      return 1
+    case "Slightly Disagree":
+      return 1
+    case _:
+      return 0
+
+
+def AdolescentPreprocessing15810(val):
+  match val:
+    case "Definitely Agree":
+      return 1
+    case "Slightly Agree":
+      return 1
+    case _:
+      return 0
+
+
+def AdolescentPreprocessing234679(val):
+  match val:
+    case "Definitely Disagree":
+      return 1
+    case "Slightly Disagree":
+      return 1
+    case _:
+      return 0
+
+
+def AdultPreprocessing17810(val):
+  match val:
+    case "Definitely Agree":
+      return 1
+    case "Slightly Agree":
+      return 1
+    case _:
+      return 0
+
+
+def AdultPreprocessing234569(val):
+  match val:
+    case "Definitely Disagree":
+      return 1
+    case "Slightly Disagree":
+      return 1
+    case _:
+      return 0
+
+
+def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundice, Family_ASD, bundle):
   data = {
       "A1" : A1,
       "A2" : A2,
@@ -15,7 +74,7 @@ def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Fami
       "A8" : A8,
       "A9" : A9,
       "A10" : A10,
-      "Age" : Age,
+      "Age_Binned" : Age_Binned,
       "Sex" : Sex,
       "Jaundice" : Jaundice,
       "Family_ASD" : Family_ASD
@@ -37,8 +96,8 @@ def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Fami
     st.write("The person is at risk of having (Autism Spectrum Disorder) ASD")
 
 
-with open("ASDmodel.dill", "rb") as f:
-  bundle = dill.load(f)
+with open("ASDmodel.pkl", "rb") as f:
+  bundle = pickle.load(f)
 
 
 def apply_question_preprocessing(row, question_col):
@@ -47,19 +106,19 @@ def apply_question_preprocessing(row, question_col):
 
     if age_binned == 'Child':
         if question_col in ['A1', 'A5', 'A7', 'A10']:
-            return bundle["ChildPreprocessing15710"](val)
+            return ChildPreprocessing15710(val)
         elif question_col in ['A2', 'A3', 'A4', 'A6', 'A8', 'A9']:
-            return bundle["ChildPreprocessing234689"](val)
+            return ChildPreprocessing234689(val)
     elif age_binned == 'Adolescent':
         if question_col in ['A1', 'A5', 'A8', 'A10']:
-            return bundle["AdolescentPreprocessing15810"](val)
+            return AdolescentPreprocessing15810(val)
         elif question_col in ['A2', 'A3', 'A4', 'A6', 'A7', 'A9']:
-            return bundle["AdolescentPreprocessing234679"](val)
+            return AdolescentPreprocessing234679(val)
     elif age_binned == 'Adult':
         if question_col in ['A1', 'A7', 'A8', 'A10']:
-            return bundle["AdultPreprocessing17810"](val)
+            return AdultPreprocessing17810(val)
         elif question_col in ['A2', 'A3', 'A4', 'A5', 'A6', 'A9']:
-            return bundle["AdultPreprocessing234569"](val)
+            return AdultPreprocessing234569(val)
     return val
 
 def preprocess(data):
@@ -76,14 +135,14 @@ st.write("It is suitable for people of age 4 upward with suspected autism who do
 Sex = st.selectbox('If you are a parent/guardian answering for a child or adolescent, please select the child’s gender. If you are an adult participant, select your own gender', ['Male', 'Female'])
 Jaundice = st.selectbox('Have you/the Child ever had Jauundice before?', ['Yes', 'No'])
 Family_ASD = st.selectbox('Is there a family history of Autism Spectrum Disorder?', ['Yes', 'No'])
-Age = st.selectbox('What age group are you in? Note: 4-11(Child), 12-17(Adolescent), 18+(Adult)', ['Child', 'Adolescent', 'Adult'])
+Age_Binned = st.selectbox('What age group are you in? Note: 4-11(Child), 12-17(Adolescent), 18+(Adult)', ['Child', 'Adolescent', 'Adult'])
 
 #Ask ASD questions for each age group.
 options = ['Definitely Disagree', 'Slightly Disagree', 'Slightly Agree', 'Definitely Agree']
 
 A1 = A2 = A3 = A4 = A5 = A6 = A7 = A8 = A9 = A10 = None
 
-if Age == 'Child':
+if Age_Binned == 'Child':
   A1 = st.selectbox('She/he often notices small sounds when others do not ', options)
   A2 = st.selectbox('She/he usually concentrates more on the whole picture, rather than the small details', options)
   A3 = st.selectbox('In a social group, she/he can easily keep track of several different people’s conversations', options)
@@ -95,7 +154,7 @@ if Age == 'Child':
   A9 = st.selectbox('She/he finds it easy to work out what someone is thinking or feeling just by looking at their face', options)
   A10 = st.selectbox('She/he finds it hard to make new friends', options)
 
-elif Age == 'Adolescent':
+elif Age_Binned == 'Adolescent':
   A1 = st.selectbox('She/he notices patterns in things all the time', options)
   A2 = st.selectbox('She/he usually concentrates more on the whole picture, rather than the small details', options)
   A3 = st.selectbox('In a social group, she/he can easily keep track of several different people’s conversations', options)
@@ -107,7 +166,7 @@ elif Age == 'Adolescent':
   A9 = st.selectbox('She/he finds social situations easy', options)
   A10 = st.selectbox('She/he finds it hard to make new friends', options)
 
-elif Age == 'Adult':
+elif Age_Binned == 'Adult':
   A1 = st.selectbox('I often notice small sounds when others do not', options)
   A2 = st.selectbox('I usually concentrate more on the whole picture, rather than the small details', options)
   A3 = st.selectbox('I find it easy to do more than one thing at once', options)
@@ -122,7 +181,6 @@ elif Age == 'Adult':
 
 if st.button('SCREEN AUTISM RISK'):
     if all(v is not None for v in [A1, A2, A3, A4, A5, A6, A7, A8, A9, A10]):
-        prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Family_ASD)
+        prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundice, Family_ASD)
     else:
         st.error("Please answer all questions before screening")
-
