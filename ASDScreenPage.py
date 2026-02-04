@@ -86,7 +86,7 @@ def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundic
   predictdata["Jaundice"] = predictdata["Jaundice"].str.lower()
   predictdata["Family_ASD"] = predictdata["Family_ASD"].str.lower()
 
-  preprocesseddata = bundle["preprocess"](predictdata)
+  preprocesseddata = preprocess(predictdata)
   y_prob = bundle["ASDmodel"].predict(preprocesseddata)
   Class = (y_prob >= 0.5).astype(int)
 
@@ -124,7 +124,7 @@ def apply_question_preprocessing(row, question_col):
 def preprocess(data):
   for col in [f'A{i}' for i in range(1, 11)]:
     data[col] = data.apply(lambda row: apply_question_preprocessing(row, col), axis=1)
-  data = encoder.transform(data[columns])
+  data = bundle["encoder"].transform(data[bundle["columns"]])
   return data
 
 
@@ -184,3 +184,4 @@ if st.button('SCREEN AUTISM RISK'):
         prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundice, Family_ASD)
     else:
         st.error("Please answer all questions before screening")
+
