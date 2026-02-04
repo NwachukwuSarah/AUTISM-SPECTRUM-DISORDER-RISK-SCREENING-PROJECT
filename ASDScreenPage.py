@@ -1,5 +1,5 @@
 import streamlit as st
-import pickle
+import dill
 import pandas as pd
 
 
@@ -37,8 +37,8 @@ def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Fami
     st.write("The person is at risk of having (Autism Spectrum Disorder) ASD")
 
 
-with open("ASDmodel (3).pkl", "rb") as f:
-  bundle = pickle.load(f)
+with open("ASDmodel.dill", "rb") as f:
+  bundle = dill.load(f)
 
 
 def apply_question_preprocessing(row, question_col):
@@ -125,3 +125,4 @@ if st.button('SCREEN AUTISM RISK'):
         prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Family_ASD)
     else:
         st.error("Please answer all questions before screening")
+
