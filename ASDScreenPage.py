@@ -62,7 +62,7 @@ def AdultPreprocessing234569(val):
       return 0
 
 
-def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundice, Family_ASD, bundle):
+def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundice, Family_ASD):
   data = {
       "A1" : A1,
       "A2" : A2,
@@ -184,4 +184,5 @@ if st.button('SCREEN AUTISM RISK'):
         prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundice, Family_ASD)
     else:
         st.error("Please answer all questions before screening")
+
 
