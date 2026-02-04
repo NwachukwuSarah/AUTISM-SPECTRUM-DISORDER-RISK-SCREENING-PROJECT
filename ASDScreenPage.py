@@ -76,7 +76,7 @@ def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundic
       "A10" : A10,
       "Age_Binned" : Age_Binned,
       "Sex" : Sex,
-      "Jaundice" : Jaundice,
+      "Jauundice" : Jaundice,
       "Family_ASD" : Family_ASD
   }
 
@@ -184,5 +184,6 @@ if st.button('SCREEN AUTISM RISK'):
         prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundice, Family_ASD)
     else:
         st.error("Please answer all questions before screening")
+
 
 
