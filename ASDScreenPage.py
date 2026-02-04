@@ -2,25 +2,8 @@ import streamlit as st
 import pickle
 import pandas as pd
 
-def load_model():
-    with open("ASDmodel (2).pkl", "rb") as f:
-        bundle = pickle.load(f)
-    
-    # Extract functions to global scope
-    globals()['ChildPreprocessing15710'] = bundle["ChildPreprocessing15710"]
-    globals()['ChildPreprocessing234689'] = bundle["ChildPreprocessing234689"]
-    globals()['AdolesentPreprocessing15810'] = bundle["AdolesentPreprocessing15810"]
-    globals()['AdolesentPreprocessing234679'] = bundle["AdolesentPreprocessing234679"]
-    globals()['AdultPreprocessing17810'] = bundle["AdultPreprocessing17810"]
-    globals()['AdultPreprocessing234569'] = bundle["AdultPreprocessing234569"]
-    globals()['apply_question_preprocessing'] = bundle["apply_question_preprocessing"]
-    
-    return bundle
 
-# Load once
-bundle = load_model()
-
-def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Family_ASD):
+def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Family_ASD, bundle):
   data = {
       "A1" : A1,
       "A2" : A2,
@@ -54,6 +37,38 @@ def prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Fami
     st.write("The person is at risk of having (Autism Spectrum Disorder) ASD")
 
 
+with open("ASDmodel (3).pkl", "rb") as f:
+  bundle = pickle.load(f)
+
+
+def apply_question_preprocessing(row, question_col):
+    age_binned = row['Age_Binned']
+    val = row[question_col]
+
+    if age_binned == 'Child':
+        if question_col in ['A1', 'A5', 'A7', 'A10']:
+            return bundle["ChildPreprocessing15710"](val)
+        elif question_col in ['A2', 'A3', 'A4', 'A6', 'A8', 'A9']:
+            return bundle["ChildPreprocessing234689"](val)
+    elif age_binned == 'Adolescent':
+        if question_col in ['A1', 'A5', 'A8', 'A10']:
+            return bundle["AdolescentPreprocessing15810"](val)
+        elif question_col in ['A2', 'A3', 'A4', 'A6', 'A7', 'A9']:
+            return bundle["AdolescentPreprocessing234679"](val)
+    elif age_binned == 'Adult':
+        if question_col in ['A1', 'A7', 'A8', 'A10']:
+            return bundle["AdultPreprocessing17810"](val)
+        elif question_col in ['A2', 'A3', 'A4', 'A5', 'A6', 'A9']:
+            return bundle["AdultPreprocessing234569"](val)
+    return val
+
+def preprocess(data):
+  for col in [f'A{i}' for i in range(1, 11)]:
+    data[col] = data.apply(lambda row: apply_question_preprocessing(row, col), axis=1)
+  data = encoder.transform(data[columns])
+  return data
+
+
 st.title("AUTISM RISK SCREENING")
 st.write("Choose a suitable answer from the options for the questions asked to predict whether a person is at the risk of having Autism Spectrum Disorder (ASD)")
 st.write("It is suitable for people of age 4 upward with suspected autism who do not have a learning disability")
@@ -64,7 +79,7 @@ Family_ASD = st.selectbox('Is there a family history of Autism Spectrum Disorder
 Age = st.selectbox('What age group are you in? Note: 4-11(Child), 12-17(Adolescent), 18+(Adult)', ['Child', 'Adolescent', 'Adult'])
 
 #Ask ASD questions for each age group.
-options = ['Definitely Disagree', 'Slightly Disagree', 'Slightly Agree', 'Definitely Agree'] 
+options = ['Definitely Disagree', 'Slightly Disagree', 'Slightly Agree', 'Definitely Agree']
 
 A1 = A2 = A3 = A4 = A5 = A6 = A7 = A8 = A9 = A10 = None
 
@@ -85,31 +100,28 @@ elif Age == 'Adolescent':
   A2 = st.selectbox('She/he usually concentrates more on the whole picture, rather than the small details', options)
   A3 = st.selectbox('In a social group, she/he can easily keep track of several different people’s conversations', options)
   A4 = st.selectbox('If there is an interruption, she/he can switch back to what she/he was doing very quickly', options)
-  A5 = st.selectbox('She/he frequently finds that she/he doesn’t know how to keep a conversation going', options)                               
+  A5 = st.selectbox('She/he frequently finds that she/he doesn’t know how to keep a conversation going', options)
   A6 = st.selectbox('She/he is good at social chit-chat', options)
-  A7 = st.selectbox('When she/he was younger, she/he used to enjoy playing games involving pretending with other children', options)                                        
-  A8 = st.selectbox('She/he finds it difficult to imagine what it would be like to be someone else', options)                 
+  A7 = st.selectbox('When she/he was younger, she/he used to enjoy playing games involving pretending with other children', options)
+  A8 = st.selectbox('She/he finds it difficult to imagine what it would be like to be someone else', options)
   A9 = st.selectbox('She/he finds social situations easy', options)
   A10 = st.selectbox('She/he finds it hard to make new friends', options)
 
 elif Age == 'Adult':
-  A1 = st.selectbox('I often notice small sounds when others do not', options)                                         
+  A1 = st.selectbox('I often notice small sounds when others do not', options)
   A2 = st.selectbox('I usually concentrate more on the whole picture, rather than the small details', options)
-  A3 = st.selectbox('I find it easy to do more than one thing at once', options)                                       
+  A3 = st.selectbox('I find it easy to do more than one thing at once', options)
   A4 = st.selectbox('If there is an interruption, I can switch back to what I was doing very quickly', options)
-  A5 = st.selectbox('I find it easy to ‘read between the lines’ when someone is talking to me', options)                                                                
+  A5 = st.selectbox('I find it easy to ‘read between the lines’ when someone is talking to me', options)
   A6 = st.selectbox('I know how to tell if someone listening to me is getting bored', options)
-  A7 = st.selectbox('When I’m reading a story I find it difficult to work out the characters’ intentions', options)                                                                            
-  A8 = st.selectbox('I like to collect information about categories of things (e.g. types of car, types of bird, types of train, types of plant etc) ', options)      
+  A7 = st.selectbox('When I’m reading a story I find it difficult to work out the characters’ intentions', options)
+  A8 = st.selectbox('I like to collect information about categories of things (e.g. types of car, types of bird, types of train, types of plant etc) ', options)
   A9 = st.selectbox('I find it easy to work out what someone is thinking or feeling just by looking at their face', options)
   A10 = st.selectbox('I find it difficult to work out people’s intentions', options)
 
-                                          
+
 if st.button('SCREEN AUTISM RISK'):
     if all(v is not None for v in [A1, A2, A3, A4, A5, A6, A7, A8, A9, A10]):
         prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age, Sex, Jaundice, Family_ASD)
     else:
-
         st.error("Please answer all questions before screening")
-
-
