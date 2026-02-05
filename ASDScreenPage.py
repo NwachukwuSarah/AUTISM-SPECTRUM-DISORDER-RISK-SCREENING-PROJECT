@@ -138,7 +138,7 @@ Family_ASD = st.selectbox('Is there a family history of Autism Spectrum Disorder
 Age_Binned = st.selectbox('What age group are you in? Note: 4-11(Child), 12-17(Adolescent), 18+(Adult)', ['Child', 'Adolescent', 'Adult'])
 
 #Ask ASD questions for each age group.
-options = ['Definitely Disagree', 'Slightly Disagree', 'Slightly Agree', 'Definitely Agree']
+options = ['Choose one option below', 'Definitely Disagree', 'Slightly Disagree', 'Slightly Agree', 'Definitely Agree']
 
 A1 = A2 = A3 = A4 = A5 = A6 = A7 = A8 = A9 = A10 = None
 
@@ -184,6 +184,7 @@ if st.button('SCREEN AUTISM RISK'):
         prediction(A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Age_Binned, Sex, Jaundice, Family_ASD)
     else:
         st.error("Please answer all questions before screening")
+
 
 
 
