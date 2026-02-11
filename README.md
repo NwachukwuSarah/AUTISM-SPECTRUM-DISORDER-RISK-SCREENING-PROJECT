@@ -20,13 +20,8 @@ The final model was deployed as an interactive web application using Streamlit, 
 You can see the AQ-10 questioniares for yourself using this link:
 
 CHILDREN: https://docs.autismresearchcentre.com/tests/AQ10-Child.pdf
-ADOLESCENTS: https://docs.autismresearchcentre.com/tests/AQ10-Adolescent.
-ADULTS: https://www.autismresearchcentre.com/content/uploads/2024/11/AQ10.pdf
-
-
-
-
 
 ADOLESCENTS: https://docs.autismresearchcentre.com/tests/AQ10-Adolescent.
 
 ADULTS: https://www.autismresearchcentre.com/content/uploads/2024/11/AQ10.pdf
+
